@@ -1,4 +1,4 @@
-# Blockchain Backend
+# Blockchain Backend (WIP)
 
 This is a simple blockchain backend implementation using Node.js, Express.js, and Mongoose.
 
@@ -20,7 +20,7 @@ Before running the project, make sure you have the following installed:
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/phoenix-funchain/blockchain.git
+   git clone https://github.com/phoenix-02/funchain.git
 
 2. Install dependencies:
 
