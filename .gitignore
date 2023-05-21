@@ -1,5 +1,7 @@
 # configs
-configs/config.js
+services/blockchain/configs/config.js
+
+.idea
 
 # Logs
 logs

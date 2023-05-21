@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const config = require('./configs/config');
-const blockchainRouter = require('./router/blockchainRouter');
-const initializeBlockchain = require('./utils/initialize');
+const blockchainRouter = require('./src/router/blockchainRouter');
+const initializeBlockchain = require('./src/utils/initialize');
 
 const app = express();
 const port = process.env.PORT || 3000;
