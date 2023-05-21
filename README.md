@@ -1,4 +1,4 @@
-# Blockchain Backend
+# Blockchain Backend (WIP)
 
 This is a simple blockchain backend implementation using Node.js, Express.js, and Mongoose.
 
