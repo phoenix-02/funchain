@@ -2,6 +2,9 @@ name: Node.js CI
 
 on:
   push:
+    paths:
+      - 'services/**'
+      - '.github/**'
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
@@ -27,3 +30,9 @@ jobs:
         run: npm run build --if-present
       - name: Run Tests
         run: npm test
+      - name: Telegram notification
+        uses: yanzay/notify-telegram@v0.1.0
+        with:
+          chat: ${{ secrets.TELEGRAM_CHAT_ID }} # user id or channel name secret
+          token: ${{ secrets.TELEGRAM_TOKEN }} # token secret
+          status: ${{ job.status }}
