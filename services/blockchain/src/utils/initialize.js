@@ -1,5 +1,3 @@
-// initialize.js
-
 const Block = require('../models/block');
 const { calculateHash, getGenesisBlock } = require('./calcHash');
 
