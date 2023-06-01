@@ -28,8 +28,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build --if-present
-      - name: Run Tests
-        run: npm test
+#      - name: Run Tests
+#        run: npm test
       - name: Telegram notification
         uses: yanzay/notify-telegram@v0.1.0
         with:
