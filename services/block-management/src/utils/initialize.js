@@ -16,7 +16,7 @@ async function initializeBlockchain() {
 
         console.log('Blockchain initialized');
     } catch (error) {
-        console.error('Error initializing blockchain:', error);
+        console.error('Error initializing block-management:', error);
         process.exit(1);
     }
 }

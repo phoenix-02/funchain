@@ -1,13 +1,10 @@
-name: Node.js CI
+name: CI
 
 on:
   push:
-    paths:
-      - 'services/**'
-      - '.github/**'
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -17,19 +14,21 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
+
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install Dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build --if-present
-#      - name: Run Tests
-#        run: npm test
+      - run: npm ci
+      - run: npm run build --if-present
+      - name: Telegram notification
+        uses: yanzay/notify-telegram@v0.1.0
+        with:
+         chat: ${{ secrets.TELEGRAM_CHAT_ID }} # user id or channel name secret
+         token: ${{ secrets.TELEGRAM_TOKEN }} # token secret
+         status: ${{ job.status }}
       - name: Telegram notification
         uses: yanzay/notify-telegram@v0.1.0
         with:

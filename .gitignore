@@ -1,5 +1,5 @@
 # configs
-services/blockchain/configs/config.js
+services/block-management/configs/config.js
 
 .idea
 
@@ -78,7 +78,7 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variable files
-.env
+services/block-management/.env
 .env.development.local
 .env.test.local
 .env.production.local
