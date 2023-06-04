@@ -26,10 +26,8 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        run: |
-          cd services/block-management
-          npm ci
-      - run: npm run build --if-present
+        run: npm ci
+        working-directory: services/block-management
       - name: Telegram notification
         uses: yanzay/notify-telegram@v0.1.0
         with:
