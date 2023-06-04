@@ -10,7 +10,7 @@
     "start": "node server.js"
   },
   "main": "server.js",
-  "author": "",
+  "author": "Il'yar Sadikov",
   "license": "ISC",
-  "description": ""
+  "description": "block management service"
 }
