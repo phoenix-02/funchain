@@ -1,9 +1,13 @@
-name: CI
+name: Block Management CI
 
 on:
   push:
+    paths:
+      - 'services/block-management/**'
     branches: [ main ]
   pull_request:
+    paths:
+      - 'services/block-management/**'
     branches: [ main ]
 
 jobs:
@@ -21,7 +25,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm ci
+      - name: Install dependencies
+        run: |
+          cd services/block-management
+          npm ci
       - run: npm run build --if-present
       - name: Telegram notification
         uses: yanzay/notify-telegram@v0.1.0
@@ -29,9 +36,3 @@ jobs:
          chat: ${{ secrets.TELEGRAM_CHAT_ID }} # user id or channel name secret
          token: ${{ secrets.TELEGRAM_TOKEN }} # token secret
          status: ${{ job.status }}
-      - name: Telegram notification
-        uses: yanzay/notify-telegram@v0.1.0
-        with:
-          chat: ${{ secrets.TELEGRAM_CHAT_ID }} # user id or channel name secret
-          token: ${{ secrets.TELEGRAM_TOKEN }} # token secret
-          status: ${{ job.status }}
