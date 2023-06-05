@@ -3,6 +3,9 @@ services/block-management/configs/config.js
 
 .idea
 
+#gundb data
+**/radata
+
 # Logs
 logs
 *.log

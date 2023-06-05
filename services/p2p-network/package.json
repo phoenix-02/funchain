@@ -1,0 +1,14 @@
+{
+  "name": "p2p-network",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/p2p.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gun": "^0.2020.1239"
+  }
+}
