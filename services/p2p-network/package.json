@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "gun": "^0.2020.1239"
+    "gun": "^0.2020.1239",
+    "socket.io": "^4.6.2"
   }
 }

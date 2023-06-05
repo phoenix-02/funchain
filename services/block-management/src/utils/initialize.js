@@ -1,18 +1,13 @@
-const Block = require('../models/block');
-const { calculateHash, getGenesisBlock } = require('./calcHash');
+const { getGenesisBlock } = require('./calcHash');
+const P2PNetwork = require('path_to_your_p2pNetwork_file');
+
+const p2pNetwork = new P2PNetwork();
 
 async function initializeBlockchain() {
     try {
-        // Проверяем, существуют ли блоки в базе данных
-        const existingBlocks = await Block.find();
-        if (existingBlocks.length > 0) {
-            console.log('Blockchain already initialized');
-            return;
-        }
-
-        // Создаем и добавляем первый блок (генезис-блок) в базу данных
+        // Create and add the first block (genesis block) to GunDB
         const genesisBlock = getGenesisBlock();
-        await Block.create(genesisBlock);
+        p2pNetwork.put(genesisBlock.hash, genesisBlock);
 
         console.log('Blockchain initialized');
     } catch (error) {

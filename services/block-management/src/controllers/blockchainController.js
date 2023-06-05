@@ -1,76 +1,95 @@
 const calcHash = require('../utils/calcHash');
-const Block = require('../models/block');
-let io;
+const WebSocket = require('ws');
 
-const setSocketIO = (socketIO) => {
-    io = socketIO;
+const FAKEBLOCK = {
+    index: 0,
+    timestamp: new Date().getTime(),
+    data: 'Your data here',
+    previousHash: '0',
+    hash: '0',
 };
 
-const createBlock = () => {
-    getLatestBlock().then((previousBlock) => {
-        const timestamp = new Date().getTime();
-        const index = previousBlock.index + 1;
-        const data = 'Your data here';
-        const hash = calcHash(index, previousBlock.hash, timestamp, data);
+class BlockchainController {
+    constructor() {
+        this.io = null;
+        this.ws = new WebSocket('ws://localhost:8080');
 
-        const block = new Block({
-            index,
-            timestamp,
-            data,
-            previousHash: previousBlock.hash,
-            hash,
+        this.requestId = 0;
+        this.requests = {};
+
+        // Listen for responses from the p2p network
+        this.ws.addEventListener('message', (event) => {
+            const { id, data } = JSON.parse(event.data);
+            if (this.requests[id]) {
+                this.requests[id](data);
+                delete this.requests[id];
+            }
         });
 
-        block
-            .save()
-            .then(() => {
-                io.emit('new_block', block); // Отправляем новый блок всем клиентам через WebSocket
-            })
-            .catch((err) => {
-                console.error('Error creating block:', err);
-            });
-    });
-};
-
-const getBlocks = (socket) => {
-    Block.find()
-        .then((blocks) => {
-            socket.emit('blocks', blocks); // Отправляем все блоки только конкретному клиенту через WebSocket
-        })
-        .catch((err) => {
-            console.error('Error getting blocks:', err);
-        });
-};
-
-const getGenesisBlock = () => {
-    const index = 0;
-    const previousHash = '0'.repeat(64);
-    const timestamp = new Date().getTime();
-    const data = 'Genesis Block';
-    const hash = calcHash(index, previousHash, timestamp, data);
-
-    return {
-        index,
-        previousHash,
-        timestamp,
-        data,
-        hash,
-    };
-};
-
-const getLatestBlock = async () => {
-    try {
-        return await Block.findOne().sort({ index: -1 });
-    } catch (error) {
-        console.error('Error getting latest block:', error);
-        return null;
     }
-};
+    setSocketIO(io) {
+        this.io = io;
+    }
+    // Create a new block
+    createBlock() {
+        console.log('asd1')
+        this.getLatestBlock().then((previousBlock = FAKEBLOCK) => {
+            console.log('asd2')
 
-module.exports = {
-    setSocketIO,
-    createBlock,
-    getBlocks,
-    getGenesisBlock,
-    getLatestBlock,
-};
+            const timestamp = new Date().getTime();
+            const index = previousBlock.index + 1;
+            const data = 'Your data here';
+            const hash = calcHash(index, previousBlock.hash, timestamp, data);
+
+            const block = {
+                index,
+                timestamp,
+                data,
+                previousHash: previousBlock.hash,
+                hash,
+            };
+
+            // Send new block to all clients via WebSocket if the connection is open
+            if (this.ws.readyState === WebSocket.OPEN) {
+                this.io.emit('new_block', block);
+                this.ws.send(JSON.stringify({ type: 'put', data: { key: block.hash, value: block } }));
+            } else {
+                console.error('Unable to send block to P2P network: WebSocket connection is not open');
+                // Handle the absence of a WebSocket connection here
+            }
+        });
+    }
+
+    // Send a request to the p2p network and return a promise that resolves with the response
+    sendRequest(type, data) {
+        return new Promise((resolve) => {
+            const id = this.requestId++;
+            this.requests[id] = resolve;
+
+            // Send the request if the WebSocket connection is open
+            if (this.ws.readyState === WebSocket.OPEN) {
+                this.ws.send(JSON.stringify({ id, type, data }));
+            } else {
+                console.error('Unable to send request to P2P network: WebSocket connection is not open');
+                // Handle the absence of a WebSocket connection here
+            }
+        });
+    }
+
+    // Get all blocks
+    getBlocks() {
+        return this.sendRequest('get_all');
+    }
+
+    // Get genesis block
+    getGenesisBlock() {
+        return this.sendRequest('get', '0');
+    }
+
+    // Get the latest block
+    getLatestBlock() {
+        return this.sendRequest('get_latest');
+    }
+}
+
+module.exports = BlockchainController;
